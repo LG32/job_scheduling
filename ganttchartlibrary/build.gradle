@@ -1,0 +1,68 @@
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'Jayesh-Bhadja'
+    bintrayName = 'Gantt-Chart-Library'
+
+    publishedGroupId = 'me.jayeshbhadja.ganttchart'
+    libraryName = 'Gantt-Chart-Library'
+    artifact = 'GanttChartLibrary'
+
+    libraryDescription = 'Android Gantt Chart Library'
+
+    siteUrl = 'https://github.com/JayeshB92/Gantt_Chart_Library'
+    gitUrl = 'https://github.com/JayeshB92/Gantt_Chart_Library.git'
+
+    libraryVersion = '1.0'
+
+    developerId = 'jayesh-bhadja'
+    developerName = 'Jayeshkumar Bhadja'
+    developerEmail = 'kailashjayesh@live.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '27.0.3'
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    maven {
+        url 'https://maven.google.com'
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    api 'com.android.support:appcompat-v7:28.0.0'
+    api 'com.eddieyuan123:tablefixheaders:1.0.0'
+    api 'joda-time:joda-time:2.9.9'
+    api 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+
+}
+
+apply from: 'https://raw.githubusercontent.com/JayeshB92/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/JayeshB92/JCenter/master/bintrayv1.gradle'

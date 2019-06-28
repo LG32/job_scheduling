@@ -1,1 +1,3 @@
-include ':app'
+include ':app', ':JNChartLib1', ':ganttchartlibrary1'
+project(':JNChartLib1').projectDir = new File('JNChartLib')
+project(':ganttchartlibrary1').projectDir = new File('ganttchartlibrary')
