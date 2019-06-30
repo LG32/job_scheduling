@@ -15,6 +15,8 @@ import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 
 import me.jayeshbhadja.ganttchartlibrary.R;
+import me.jayeshbhadja.ganttchartlibrary.model.ColorBean;
+import me.jayeshbhadja.ganttchartlibrary.model.ColorsList;
 import me.jayeshbhadja.ganttchartlibrary.model.Task;
 import me.jayeshbhadja.ganttchartlibrary.utils.AppConstant;
 
@@ -77,30 +79,6 @@ public class BarView extends View {
         this.context = context;
         setWillNotDraw(false);
 
-        mFillDone = new Paint();
-        mFillDone.setColor(ContextCompat.getColor(context, R.color.bar_done));
-
-        mFillUndone = new Paint();
-        mFillUndone.setColor(ContextCompat.getColor(context, R.color.bar_undone));
-
-        mFillStatus = new Paint();
-
-        mStatusBorder = new Paint();
-        mStatusBorder.setStyle(Paint.Style.STROKE);
-        mStatusBorder.setStrokeWidth(5);
-
-        // stroke
-        mBorderPaint = new Paint();
-        mBorderPaint.setStyle(Paint.Style.STROKE);
-        mBorderPaint.setColor(ContextCompat.getColor(context, R.color.bar_border));
-        mBorderPaint.setStrokeWidth(5);
-
-        mCharTaskNamePaint = new Paint();
-        mCharTaskNamePaint.setAntiAlias(true);
-        mCharTaskNamePaint.setColor(ContextCompat.getColor(context, R.color.bar_text));
-        mCharTaskNamePaint.setTextSize(10.f * scale);
-        mCharTaskNamePaint.setTextAlign(Paint.Align.CENTER);
-
 //        shadow = new Paint();
 //        shadow.setAntiAlias(true);
 //        shadow.setColor(ContextCompat.getColor(context, R.color.bar_shadow));
@@ -119,9 +97,42 @@ public class BarView extends View {
         this.dy = dy;
     }
 
+    public void initPaint( Task task ){
+
+        ColorsList colorsList = ColorsList.getColorsList ();
+
+        ColorBean colorBean = colorsList.getColor ( task.getUuid () );
+
+        mFillDone = new Paint();
+        mFillDone.setColor(ContextCompat.getColor(context, colorBean.getBar_done ()));
+
+        mFillUndone = new Paint();
+        mFillUndone.setColor(ContextCompat.getColor(context, colorBean.getBar_undone ()));
+
+        mFillStatus = new Paint();
+
+        mStatusBorder = new Paint();
+        mStatusBorder.setStyle(Paint.Style.STROKE);
+        mStatusBorder.setStrokeWidth(5);
+
+        // stroke
+        mBorderPaint = new Paint();
+        mBorderPaint.setStyle(Paint.Style.STROKE);
+        mBorderPaint.setColor(ContextCompat.getColor(context, colorBean.getBar_border ()));
+        mBorderPaint.setStrokeWidth(5);
+
+        mCharTaskNamePaint = new Paint();
+        mCharTaskNamePaint.setAntiAlias(true);
+        mCharTaskNamePaint.setColor(ContextCompat.getColor(context, R.color.bar_text));
+        mCharTaskNamePaint.setTextSize(10.f * scale);
+        mCharTaskNamePaint.setTextAlign(Paint.Align.CENTER);
+    }
+
     public void setTaskAndStatus(Boolean isTaskOrStatus, Task task) {
         this.task = task;
         this.isTaskOrStatus = isTaskOrStatus;
+        initPaint ( task );
+
         start = DateTime.parse(task.getStartDate(), DateTimeFormat.forPattern(AppConstant.DATE_FORMAT_yyyy_MM_dd));
         end = DateTime.parse(task.getEndDate(), DateTimeFormat.forPattern(AppConstant.DATE_FORMAT_yyyy_MM_dd));
 
@@ -170,15 +181,17 @@ public class BarView extends View {
                     }
                     break;
                 case AppConstant.GANTT_STATUS_ONTRACK:
-                    if (statusUpdateDate.isAfter(end)) {
+//                    if (statusUpdateDate.isAfter(end)) {
+//                        mFillStatus.setColor(ContextCompat.getColor(context, R.color.bar_delayed));
+//                        mStatusBorder.setColor(ContextCompat.getColor(context, R.color.bar_delayed));
+//                        textStatus = AppConstant.GANTT_STATUS_DELAYED;
+//                    } else {
+//                        mFillStatus.setColor(ContextCompat.getColor(context, R.color.bar_on_track));
+//                        mStatusBorder.setColor(ContextCompat.getColor(context, R.color.bar_on_track));
                         mFillStatus.setColor(ContextCompat.getColor(context, R.color.bar_delayed));
                         mStatusBorder.setColor(ContextCompat.getColor(context, R.color.bar_delayed));
-                        textStatus = AppConstant.GANTT_STATUS_DELAYED;
-                    } else {
-                        mFillStatus.setColor(ContextCompat.getColor(context, R.color.bar_on_track));
-                        mStatusBorder.setColor(ContextCompat.getColor(context, R.color.bar_on_track));
                         textStatus = task.getStatus();
-                    }
+//                    }
                     break;
                 case AppConstant.GANTT_STATUS_COMPLETED:
                     if (statusUpdateDate.isAfter(end)) {
@@ -194,6 +207,12 @@ public class BarView extends View {
                         mStatusBorder.setColor(ContextCompat.getColor(context, R.color.bar_on_track));
                         textStatus = task.getStatus();
                     }
+                    break;
+
+                case AppConstant.GANTT_STATUS_CUTOFF:
+                    mFillStatus.setColor ( ContextCompat.getColor ( context,R.color.bar_cut_off ) );
+                    mStatusBorder.setColor ( ContextCompat.getColor ( context, R.color.bar_cut_off ) );
+                    textStatus = task.getStatus ();
                     break;
                 default:
                     Log.e(TAG, "Gantt Status Not Found: " + task.getStatus());

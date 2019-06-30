@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,17 +18,25 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.administrator.job_scheduling.R;
+import com.example.administrator.job_scheduling.model.TaskBean;
+import com.jn.chart.charts.LineChart;
 import com.jn.chart.charts.PieChart;
 import com.jn.chart.components.Legend;
 import com.jn.chart.data.Entry;
 import com.jn.chart.data.PieData;
 import com.jn.chart.data.PieDataSet;
+import com.jn.chart.formatter.PercentFormatter;
 import com.jn.chart.formatter.ValueFormatter;
 import com.jn.chart.highlight.Highlight;
 import com.jn.chart.listener.OnChartValueSelectedListener;
+import com.jn.chart.manager.LineChartManager;
 import com.jn.chart.utils.ViewPortHandler;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +46,7 @@ import me.jayeshbhadja.ganttchartlibrary.model.GanttData;
 import me.jayeshbhadja.ganttchartlibrary.model.Milestone;
 import me.jayeshbhadja.ganttchartlibrary.model.Project;
 import me.jayeshbhadja.ganttchartlibrary.model.Task;
+import me.jayeshbhadja.ganttchartlibrary.utils.AppConstant;
 
 @SuppressLint("Registered")
 public class OrderInfoActivity extends AppCompatActivity {
@@ -64,6 +74,8 @@ public class OrderInfoActivity extends AppCompatActivity {
     private Project project;
     private ArrayList<Task> tasks;
     private ArrayList<Milestone> milestones;
+    private static String TAG = "OrderInfoActivity";
+    private ArrayList<ArrayList<TaskBean>> arrayLists;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +89,56 @@ public class OrderInfoActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        initPieChartView ();
+        initLineChartView ();
+    }
+
+    private void initValue() {
+
+    }
+
+    private void initLineChartView() {
+
+        LineChart lineChart = findViewById ( R.id.lineChart1 );
+        lineChart.setDescription ( "周数" );
+        lineChart.setTouchEnabled ( true );
+        lineChart.setScaleEnabled ( false );
+
+        ArrayList<Integer> data = new ArrayList<> ();
+        int sum = 0;
+        Random ra = new Random ();
+        for (int i = 0; i < 20; i++) {
+            sum = (int) (sum + ra.nextInt ( 5 ));
+            Log.i ( TAG, "initLineChartView: " + sum );
+            data.add ( sum );
+        }
+
+        initLineChart1 ( lineChart, data );
+    }
+
+    private void initLineChart1(LineChart mLineChart1, ArrayList<Integer> data) {
+        //设置x轴的数据
+        ArrayList<String> xValues = new ArrayList<> ();
+        for (int i = 0; i < 20; i++) {
+            xValues.add ( i + "周" );
+        }
+
+        //设置y轴的数据
+        ArrayList<Entry> yValue = new ArrayList<> ();
+
+        for (int i = 0; i < data.size (); i++) {
+            yValue.add ( new Entry ( data.get ( i ), i + 1 ) );
+        }
+        //设置折线的名称
+        LineChartManager.setLineName ( "成本/万" );
+        //创建一条折线的图表
+        LineChartManager.initSingleLineChart ( this, mLineChart1, xValues, yValue );
+    }
+
+    /**
+     * 初始化饼图数据
+     */
+    private void initPieChartView() {
         ArrayList<PieChart> pieCharts = new ArrayList<> ();
         pieCharts.add ( piechart1 );
         pieCharts.add ( piechart2 );
@@ -98,11 +160,14 @@ public class OrderInfoActivity extends AppCompatActivity {
         }
     }
 
-    private void initValue() {
 
-    }
-
-    public void initPieChart(PieChart pieChart, ArrayList<Float> date) {
+    /**
+     * 初始化饼图设定
+     *
+     * @param pieChart piechart对象
+     * @param data     piechart具体数据
+     */
+    public void initPieChart(PieChart pieChart, ArrayList<Float> data) {
 
         int sum = 15;
 
@@ -121,7 +186,7 @@ public class OrderInfoActivity extends AppCompatActivity {
             return;
         }
 
-        pieChart.setData ( generatePieData ( date ) );
+        pieChart.setData ( generatePieData ( data ) );
 
         legend.setEnabled ( true );
         legend.setPosition ( Legend.LegendPosition.BELOW_CHART_CENTER );
@@ -234,44 +299,227 @@ public class OrderInfoActivity extends AppCompatActivity {
 
     @OnClick(R.id.btGantt)
     public void onViewClicked(View view) {
-        switch (view.getId ()){
+        switch (view.getId ()) {
             case R.id.btGantt:
                 initGanttView ();
                 break;
         }
     }
 
-    private void initGanttView(){
+    private void initDate() {
+        arrayLists = new ArrayList<> ();
+        ArrayList<TaskBean> taskBeans = new ArrayList<> ();
+        TaskBean taskBean = new TaskBean ();
+        taskBean.setUuid ( "1" );
+        taskBean.setTaskId ( 1 );
+        taskBean.setMachineId ( 1 );
+        taskBean.setStartDate ( "2019-03-25" );
+        taskBean.setEndDate ( "2019-04-15" );
+
+        TaskBean taskBean1 = new TaskBean ();
+        taskBean1.setUuid ( "1" );
+        taskBean1.setTaskId ( 2 );
+        taskBean1.setMachineId ( 1 );
+        taskBean1.setStartDate ( "2019-04-20" );
+        taskBean1.setEndDate ( "2019-05-20" );
+
+        TaskBean taskBean2 = new TaskBean ();
+        taskBean2.setUuid ( "2" );
+        taskBean2.setTaskId ( 3 );
+        taskBean2.setMachineId ( 1 );
+        taskBean2.setStartDate ( "2019-06-10" );
+        taskBean2.setEndDate ( "2019-07-30" );
+
+        taskBeans.add ( taskBean );
+        taskBeans.add ( taskBean1 );
+        taskBeans.add ( taskBean2 );
+        arrayLists.add ( taskBeans );
+
+/*********************************************************************/
+
+        ArrayList<TaskBean> taskBeans1 = new ArrayList<> ();
+        TaskBean taskBean3 = new TaskBean ();
+        taskBean3.setUuid ( "2" );
+        taskBean3.setTaskId ( 1 );
+        taskBean3.setMachineId ( 2 );
+        taskBean3.setStartDate ( "2019-04-25" );
+        taskBean3.setEndDate ( "2019-05-15" );
+
+        TaskBean taskBean4 = new TaskBean ();
+        taskBean4.setUuid ( "2" );
+        taskBean4.setTaskId ( 2 );
+        taskBean4.setMachineId ( 2 );
+        taskBean4.setStartDate ( "2019-05-20" );
+        taskBean4.setEndDate ( "2019-06-10" );
+
+        TaskBean taskBean5 = new TaskBean ();
+        taskBean5.setUuid ( "3" );
+        taskBean5.setTaskId ( 3 );
+        taskBean5.setMachineId ( 2 );
+        taskBean5.setStartDate ( "2019-06-10" );
+        taskBean5.setEndDate ( "2019-07-30" );
+
+        taskBeans1.add ( taskBean3 );
+        taskBeans1.add ( taskBean4 );
+        taskBeans1.add ( taskBean5 );
+        arrayLists.add ( taskBeans1 );
+
+        /****************************************************************/
+
+        ArrayList<TaskBean> taskBeans2 = new ArrayList<> ();
+        TaskBean taskBean6 = new TaskBean ();
+        taskBean6.setUuid ( "3" );
+        taskBean6.setTaskId ( 1 );
+        taskBean6.setMachineId ( 3 );
+        taskBean6.setStartDate ( "2019-03-25" );
+        taskBean6.setEndDate ( "2019-04-25" );
+
+        TaskBean taskBean7 = new TaskBean ();
+        taskBean7.setUuid ( "4" );
+        taskBean7.setTaskId ( 2 );
+        taskBean7.setMachineId ( 3 );
+        taskBean7.setStartDate ( "2019-05-10" );
+        taskBean7.setEndDate ( "2019-05-20" );
+
+        TaskBean taskBean8 = new TaskBean ();
+        taskBean8.setUuid ( "4" );
+        taskBean8.setTaskId ( 3 );
+        taskBean8.setMachineId ( 3 );
+        taskBean8.setStartDate ( "2019-06-10" );
+        taskBean8.setEndDate ( "2019-07-30" );
+
+        taskBeans2.add ( taskBean6 );
+        taskBeans2.add ( taskBean7 );
+        taskBeans2.add ( taskBean8 );
+        arrayLists.add ( taskBeans2 );
+    }
+
+    private void initGanttView() {
         this.compatActivity = this;
-        project = new Project("1", "Test", "2019-06-25", "2019-08-01");
-        tasks = new ArrayList<Task>();
-        milestones = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Task task = new Task(String.valueOf(i), "Task" + i, "2019-06-25", "2019-08-01", null, null, null);
+        String projectStart = "2019-03-25";
+        String projectEnd = "2019-09-01";
+        project = new Project ( "1", "Test", projectStart, projectEnd );
+        tasks = new ArrayList<Task> ();
+        milestones = new ArrayList<> ();
+        initDate ();
+        for (int i = 0; i < arrayLists.size (); i++) {
+
+            for (int j = 0; j < arrayLists.get ( i ).size (); j++) {
+                TaskBean taskBean = arrayLists.get ( i ).get ( j );
+                Task task = new Task ( taskBean.getUuid (),
+                        "Machine" + taskBean.getMachineId () + " Task" + taskBean.getTaskId (),
+                        taskBean.getStartDate (),
+                        taskBean.getEndDate (),
+                        judgeState ( taskBean.getStartDate (), taskBean.getEndDate () ),
+                        judgeStatusDate ( taskBean.getEndDate () ),
+                        null );
+                tasks.add ( task );
+            }
+
+            Task task = new Task("分割线", "分割线", projectStart, projectEnd, AppConstant.GANTT_STATUS_CUTOFF, projectEnd, null);
             tasks.add(task);
+
         }
-        GanttData.initGanttData(project, tasks, milestones);
-        Intent intent = new Intent(compatActivity, Gantt.class);
-        startActivity(intent);
+        GanttData.initGanttData ( project, tasks, milestones );
+        Intent intent = new Intent ( compatActivity, Gantt.class );
+        startActivity ( intent );
+    }
+
+    /**
+     * @param startDate task开始日期 yyyy-mm-dd
+     * @param endDate   task结束日期 yyyy-mm-dd
+     * @return AppConstant中的状态码
+     */
+    private String judgeState(String startDate, String endDate) {
+        String todayDate = getTodayDate ();
+
+        assert todayDate != null;
+        int today = stringToInt ( todayDate );
+        int start = stringToInt ( startDate );
+        int end = stringToInt ( endDate );
+
+        if (start >= today) {
+            return AppConstant.DATE_FORMAT_yyyy_MM_dd;
+        } else {
+            if (end <= today) {
+                return AppConstant.GANTT_STATUS_COMPLETED;
+            }
+            return AppConstant.GANTT_STATUS_ONTRACK;
+        }
+    }
+
+    /**
+     * yyyy-mm-dd转int
+     *
+     * @param date yyyy-mm-dd格式String日期
+     * @return int型如20190625日期格式
+     */
+    private int stringToInt(String date) {
+        String str[] = date.split ( "-" );
+        StringBuilder strDate = new StringBuilder ();
+        int intDate;
+        if (str.length != 0) {
+            for (String aStr : str) {
+                strDate.append ( aStr );
+            }
+
+            intDate = Integer.parseInt ( String.valueOf ( strDate ) );
+            return intDate;
+        }
+        return 0;
+    }
+
+    private String toPercentageComplete(int start, int end, int today) {
+        int percentage = 0;
+        if (today <= start) {
+            percentage = 0;
+        } else if (end >= today) {
+            percentage = 100;
+        } else if (today > start && today < end) {
+            percentage = ((today - start) / (end - start)) * 100;
+        }
+        return String.valueOf ( percentage );
+    }
+
+    private String judgeStatusDate(String endDate) {
+        if (stringToInt ( endDate ) > stringToInt ( Objects.requireNonNull ( getTodayDate () ) )) {
+            return getTodayDate ();
+        } else {
+            return endDate;
+        }
+    }
+
+    private String getTodayDate() {
+
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat format = new SimpleDateFormat ( "yyyy-MM-dd" );
+        try {
+            String date = format.format ( new Date () );
+            Log.i ( TAG, "getTodayDate" + date );
+            return date;
+        } catch (Exception e) {
+            e.printStackTrace ();
+            return null;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.gantt, menu);
+        super.onCreateOptionsMenu ( menu );
+        getMenuInflater ().inflate ( R.menu.gantt, menu );
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch (item.getItemId ()) {
             case R.id.action_gantt:
-                GanttData.initGanttData(project, tasks, milestones);
-                Intent intent = new Intent(compatActivity, Gantt.class);
-                startActivity(intent);
+                GanttData.initGanttData ( project, tasks, milestones );
+                Intent intent = new Intent ( compatActivity, Gantt.class );
+                startActivity ( intent );
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected ( item );
         }
     }
 }

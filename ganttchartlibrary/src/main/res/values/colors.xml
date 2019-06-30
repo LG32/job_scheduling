@@ -22,9 +22,6 @@
     <color name="scale_dayoff">#c4ced3</color>
     <color name="today_line">#FF9999</color>
     <color name="milestone_line">#F8B239</color>
-    <color name="bar_done">#009AB6</color>
-    <color name="bar_undone">#00B7D6</color>
-    <color name="bar_border">#0096B2</color>
     <color name="bar_shadow">#009688</color>
     <color name="bar_text">#ffffff</color>
 
@@ -35,5 +32,22 @@
     <color name="bar_before_time">#BB32CD</color>
     <color name="bar_on_track">#00DA53</color>
     <color name="bar_completed">#00C1AF</color>
+    <color name="bar_cut_off">#2F4F4F</color>
 
+    <!--Gantt Bar Colors-->
+    <color name="bar_done_cambridge_blue">#009AB6</color>
+    <color name="bar_undone_cambridge_blue">#00B7D6</color>
+    <color name="bar_border_cambridge_blue">#0096B2</color>
+    <color name="bar_done_blue">#0000CD</color>
+    <color name="bar_undone_blue">#0000FF</color>
+    <color name="bar_border_blue">#191970</color>
+    <color name="bar_done_pink">#FFB6C1</color>
+    <color name="bar_undone_pink">#FFC0CB</color>
+    <color name="bar_border_pink">#FF6984</color>
+    <color name="bar_done_yellow">#FFD700</color>
+    <color name="bar_undone_yellow">#FFFF00</color>
+    <color name="bar_border_yellow">#DAA520</color>
+    <color name="bar_done_red">#FF0000</color>
+    <color name="bar_undone_red">#FF4500</color>
+    <color name="bar_border_red">#A52A2A</color>
 </resources>
